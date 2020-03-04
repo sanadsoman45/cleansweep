@@ -1,0 +1,222 @@
+<!doctype html><html lang="en"><head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width  initial-scale=1.0"> 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='xyz.css') }}">
+<script>
+$(document).ready(function(){
+    $(".down").on("mousedown touchstart", function() {
+   $("#stat").html("<h1>Running Backward</h1>");
+     $.get("/backward");
+     }).on("mouseup touchend", function(){
+   $("#stat").html("<h1>..Stopped..</h1>");
+     $.get("/stop");
+	 
+    });
+	
+    $(".up").on("mousedown touchstart", function() {
+  $("#stat").html("<h1>Running Forward</h1>");
+     $.get("/forward");
+     }).on("mouseup touchend", function() {
+   $("#stat").html("<h1>..Stopped..</h1>");
+     $.get("/stop");
+    });
+	
+    $(".left").on("mousedown touchstart", function() {
+  $("#stat").html("<h1>Running Left</h1>");
+     $.get("/left");
+     }).on("mouseup touchend", function() {
+   $("#stat").html("<h1>..Stopped..</h1>");
+     $.get("/stop");
+    });
+    $(".right").on("mousedown touchstart", function() {
+  $("#stat").html("<h1>Running Right</h1>");
+     $.get("/right");
+     }).on("mouseup touchend", function() {
+   $("#stat").html("<h1>..Stopped..</h1>");
+     $.get("/stop");
+    });
+  $("#recx").on("mousedown touchstart", function() {
+  $("#stat").html("<h1>Mic On</h1>");
+	 console.log("jquery voice");
+	recognition.start();
+    	 $.get("/voice");
+	 
+     });
+	 
+	 $("#recx").on("mouseup touchend", function() {
+   $("#stat").html("<h1>..Mic Off..</h1>");
+	 recognition.stop();
+	 console.log("stopeed")
+	 $.get("/stop");
+	 });
+	$("#pmp").on("mousedown touchstart", function() {
+  $("#stat").html("<h1>Pump On</h1>");
+    	 $.get("/pump");
+	$.get("/stop");
+	
+     });
+$("#pmp").on("mouseup touchend", function() {
+  $("#stat").html("<h1>Pump Off</h1>");
+	$.get("/stop");
+	
+     });
+
+
+	
+	 
+     
+    
+});
+</script> 
+<style>
+#title{
+background:#f9eb3d;
+font-family:Algerian;
+margin:2px;
+font-size:55px;
+border-radius: 50%;
+padding:3px;
+text-align:center;
+position:relative;
+height:20%
+}
+
+#subtitle{
+font-family:Harrington;
+margin:2px;
+font-size:25px;
+text-align:center;
+}
+
+#controls{
+user-select:none;
+-webkit-user-select:none; 
+-webkit-touch-callout:none; 
+-moz-user-select:none; 
+-ms-user-select:none; 
+margin:0;
+padding:5px;
+text-align:center;
+margin-top:120px;
+}
+
+.btn{  
+border:2px solid #3498db;
+border-radius: 12px;
+background: #08f9a1 ;
+padding:8px 8px;
+font-size:25px;
+font-family:Berlin Sans FB;
+cursor:pointer;
+margin:10px;
+position:relative;
+overflow:hidden;
+transition:0.5s;
+}
+#pmp{
+border:2px solid #3498db;
+border-radius: 8px;
+background: #08f9a1 ;
+padding:8px 8px;
+font-size:25px;
+font-family:Berlin Sans FB;
+cursor:pointer;
+margin:5px;
+position:relative;
+overflow:hidden;
+transition:0.5s;
+}
+#recx{
+border:2px solid #3498db;
+border-radius: 8px;
+background: #08f9a1 ;
+padding:7px 7px;
+font-size:25px;
+font-family:Berlin Sans FB;
+cursor:pointer;
+margin:5px;
+position:relative;
+overflow:hidden;
+transition:0.5s;
+}
+
+.up:hover,.left:hover,.right:hover,.down:hover,#recx:hover,#pmp:hover{
+background: transparent;
+background:#2e64f5;
+color:#fff;
+}
+</style>
+ </head> 
+ <body> 
+  <div id="title"> 
+   <font color="blue">EasySweep<font></font></font> 
+  </div> 
+  <font color="blue"><font><br> <p id="subtitle"><font color="#e3f908">Cleaning Made Easy....</font></p>    
+ <div id="controls"> 
+     <table align="center">  
+       <tr> 
+        <td> </td> 
+        <td><button class="btn up">FORWARD</button> </td> 
+       </tr> 
+       <tr> 
+        <td><button class="btn left">LEFT</button> </td> 
+        <td><button id="recx">RECORD</button><button id="pmp">PUMP</button> </td> 
+        <td><button class="btn right">RIGHT</button> </td> 
+       </tr> 
+       <tr> 
+        <td> </td> 
+        <td><button class="btn down">BACKWARD</button> </td> 
+       </tr> 
+     </table> 
+     <div id="stat"> 
+      <h1></h1> 
+     </div>  
+    </div> 
+	<script>
+    window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    let finalTranscript = '';
+    let recognition = new window.SpeechRecognition();
+
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 10;
+    recognition.continuous = true;
+
+    recognition.onresult = (event) => {
+      let interimTranscript = '';
+      for (let i = event.resultIndex, len = event.results.length; i < len; i++) {
+        let transcript = event.results[i][0].transcript;
+          interimTranscript += transcript;
+	  console.log("continuous "+interimTranscript)
+		  if (interimTranscript=="forward"||interimTranscript=="goforward"){
+		window.location.href="https://192.168.0.6:5020/voice?command=forward";
+		console.log(interimTranscript);
+	  }
+		else if (interimTranscript=="backward"||interimTranscript=="go backward"||interimTranscript=="reverse"){
+		window.location.href="https://192.168.0.6:5020/voice?command=backward";
+		console.log(interimTranscript);
+	  }
+		else if (interimTranscript=="left"||interimTranscript=="go left"||interimTranscript=="turn left"){
+		window.location.href="https://192.168.0.6:5020/voice?command=left";
+		console.log(interimTranscript);
+	  }
+		else if (interimTranscript=="right"||interimTranscript=="go right"||interimTranscript=="turn right"){
+		window.location.href="https://192.168.0.6:5020/voice?command=right";
+		console.log(interimTranscript);
+	  }
+		else if (interimTranscript=="pump"||interimTranscript=="pump on"||interimTranscript=="water on"){
+		window.location.href="https://192.168.0.6:5020/voice?command=pump";
+		console.log(interimTranscript);
+	  }
+		
+		else{
+		console.log("invalid command")
+	  }
+        } 
+      }
+	  
+    
+   
+  </script>
+ </body>
+</html>
